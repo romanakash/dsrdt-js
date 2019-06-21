@@ -8,4 +8,4 @@ https://github.com/ipfs-shipyard/js-delta-crdts
 
 Made for educational purposes and work still in progress
 
-Can be used in production of brave enough
+Can be used in production if brave enough
