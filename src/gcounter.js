@@ -4,6 +4,8 @@ const GCounter = (initId = new Date().toISOString()) => {
 	const id = initId;
 	let m = Map({ [id]: 0 });
 
+	const initial = () => Map({});
+
 	const state = () => m;
 
 	const inc = () => {
@@ -19,7 +21,10 @@ const GCounter = (initId = new Date().toISOString()) => {
 
 	const apply = delta => (m = join(m, delta));
 
-	return Object.freeze({ state, inc, value, join, apply });
+	GCounter.initial = initial;
+	GCounter.join = join;
+
+	return Object.freeze({ state, inc, value, apply });
 };
 
 export default GCounter;

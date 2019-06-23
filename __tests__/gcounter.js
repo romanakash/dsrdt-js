@@ -1,29 +1,55 @@
-import GCounter from '../src/gcounter';
 import { Map } from 'immutable';
+import GCounter from '../src/gcounter';
 
 describe('GCounter', () => {
 	describe('Local', () => {
 		const id = '1';
-		const gcounter = GCounter(id);
-		test('Can be initiated', () => {
-			expect(gcounter).toEqual({
-				state: expect.any(Function),
-				inc: expect.any(Function),
-				value: expect.any(Function),
-				join: expect.any(Function),
-				apply: expect.any(Function)
+
+		describe('Check initialisation', () => {
+			const gcounter = GCounter(id);
+
+			test('object methods', () => {
+				expect(gcounter).toEqual({
+					state: expect.any(Function),
+					inc: expect.any(Function),
+					value: expect.any(Function),
+					apply: expect.any(Function)
+				});
 			});
-			expect(gcounter.value()).toEqual(0);
-			expect(gcounter.state()).toEqual(Map({ [id]: 0 }));
+
+			test('initial state', () => {
+				expect(gcounter.state()).toEqual(Map({ [id]: 0 }));
+			});
+
+			test('initial value', () => {
+				expect(gcounter.value()).toEqual(0);
+			});
 		});
-		test('Can increment', () => {
-			expect(gcounter.inc()).toEqual(Map({ [id]: 1 }));
-			expect(gcounter.value()).toEqual(1);
+
+		describe('Can increment', () => {
+			const gcounter = GCounter(id);
+
+			test('return delta', () => {
+				expect(gcounter.inc()).toEqual(Map({ [id]: 1 }));
+			});
+			test('internal state', () => {
+				expect(gcounter.value()).toEqual(1);
+			});
 		});
-		test('Can join', () => {
-			expect(gcounter.join(gcounter.state(), gcounter.inc())).toEqual(
-				Map({ [id]: 2 })
-			);
+
+		describe('Check static methods', () => {
+			const gcounter = GCounter(id);
+
+			test('initial', () => {
+				expect(GCounter.initial()).toEqual(Map());
+			});
+
+			test('Can join', () => {
+				[1, 2, 3].forEach(() => gcounter.inc());
+				expect(GCounter.join(gcounter.state(), gcounter.inc())).toEqual(
+					Map({ [id]: 4 })
+				);
+			});
 		});
 	});
 	describe('Convergence', () => {
@@ -33,23 +59,23 @@ describe('GCounter', () => {
 		const gcounter2 = GCounter(id2);
 		const deltas1 = [];
 		const deltas2 = [];
+
 		test('Can increment', () => {
-			deltas1.push(gcounter1.inc());
-			deltas1.push(gcounter1.inc());
-			deltas1.push(gcounter1.inc());
-			deltas2.push(gcounter2.inc());
-			deltas2.push(gcounter2.inc());
+			[1, 2, 3].forEach(() => deltas1.push(gcounter1.inc()));
+			[1, 2].forEach(() => deltas2.push(gcounter2.inc()));
 			expect(gcounter1.value()).toEqual(3);
 			expect(gcounter2.value()).toEqual(2);
 		});
+
 		test('Can join', () => {
-			expect(
-				gcounter1.join(gcounter1.state(), gcounter2.state())
-			).toEqual(Map({ [id1]: 3, [id2]: 2 }));
+			expect(GCounter.join(gcounter1.state(), gcounter2.state())).toEqual(
+				Map({ [id1]: 3, [id2]: 2 })
+			);
 		});
+
 		test('Converges to one', () => {
-			const deltaGroup1 = deltas1.reduce(gcounter1.join);
-			const deltaGroup2 = deltas2.reduce(gcounter2.join);
+			const deltaGroup1 = deltas1.reduce(GCounter.join);
+			const deltaGroup2 = deltas2.reduce(GCounter.join);
 
 			gcounter1.apply(deltaGroup2);
 			expect(gcounter1.value()).toEqual(5);
