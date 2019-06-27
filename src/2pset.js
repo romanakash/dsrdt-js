@@ -9,14 +9,16 @@ const TwoPSet = () => {
 
 	const insert = elem => {
 		const addSet = pset[0].add(elem);
-		pset[0] = addSet;
-		return [addSet, Set()];
+		const delta = [addSet, Set()];
+		pset = join(pset, delta);
+		return delta;
 	};
 
 	const remove = elem => {
 		const removeSet = pset[1].add(elem);
-		pset[1] = removeSet;
-		return [Set(), removeSet];
+		const delta = [Set(), removeSet];
+		pset = join(pset, delta);
+		return delta;
 	};
 
 	const elements = () => pset[0].subtract(pset[1]);

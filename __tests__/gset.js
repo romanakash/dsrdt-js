@@ -24,30 +24,28 @@ describe('GSet', () => {
 			});
 		});
 
+		describe('Check static methods', () => {
+			test('inital', () => {
+				expect(GSet.initial()).toEqual(Set());
+			});
+
+			test('join', () => {
+				expect(GSet.join(Set(['a', 'b']), Set(['c']))).toEqual(
+					Set(['a', 'b', 'c'])
+				);
+			});
+		});
+
 		describe('Can insert elements', () => {
 			const gset = GSet();
 
 			test('return delta', () => {
 				expect(gset.insert(1)).toEqual(Set([1]));
 			});
-			test('internal state', () => {
+
+			test('internal elements', () => {
 				gset.insert(2);
 				expect(gset.elements()).toEqual(Set([1, 2]));
-			});
-		});
-
-		describe('Check static methods', () => {
-			const gset = GSet();
-
-			test('inital', () => {
-				expect(GSet.initial()).toEqual(Set());
-			});
-
-			test('Can join', () => {
-				['a', 'b'].forEach(elem => gset.insert(elem));
-				expect(GSet.join(gset.state(), gset.insert('c'))).toEqual(
-					Set(['a', 'b', 'c'])
-				);
 			});
 		});
 	});
