@@ -8,8 +8,9 @@ const GSet = () => {
 	const state = () => s;
 
 	const insert = elem => {
-		s = s.add(elem);
-		return Set([elem]);
+		const delta = Set([elem]);
+		s = join(s, delta);
+		return delta;
 	};
 
 	const elements = () => s;

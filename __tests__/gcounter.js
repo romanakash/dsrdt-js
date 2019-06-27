@@ -26,32 +26,31 @@ describe('GCounter', () => {
 			});
 		});
 
+		describe('Check static methods', () => {
+			test('initial', () => {
+				expect(GCounter.initial()).toEqual(Map());
+			});
+
+			test('join', () => {
+				expect(
+					GCounter.join(Map({ [id]: 1 }), Map({ [id]: 2 }))
+				).toEqual(Map({ [id]: 2 }));
+			});
+		});
+
 		describe('Can increment', () => {
 			const gcounter = GCounter(id);
 
 			test('return delta', () => {
 				expect(gcounter.inc()).toEqual(Map({ [id]: 1 }));
 			});
-			test('internal state', () => {
+
+			test('internal value', () => {
 				expect(gcounter.value()).toEqual(1);
 			});
 		});
-
-		describe('Check static methods', () => {
-			const gcounter = GCounter(id);
-
-			test('initial', () => {
-				expect(GCounter.initial()).toEqual(Map());
-			});
-
-			test('Can join', () => {
-				[1, 2, 3].forEach(() => gcounter.inc());
-				expect(GCounter.join(gcounter.state(), gcounter.inc())).toEqual(
-					Map({ [id]: 4 })
-				);
-			});
-		});
 	});
+
 	describe('Convergence', () => {
 		const id1 = '1';
 		const id2 = '2';

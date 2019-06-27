@@ -25,6 +25,21 @@ describe('TwoPSet', () => {
 			});
 		});
 
+		describe('Check static methods', () => {
+			test('initial', () => {
+				expect(TwoPSet.initial()).toEqual([Set(), Set()]);
+			});
+
+			test('join', () => {
+				expect(
+					TwoPSet.join(
+						[Set(['a', 'b']), Set()],
+						[Set('c'), Set(['b'])]
+					)
+				).toEqual([Set(['a', 'b', 'c']), Set(['b'])]);
+			});
+		});
+
 		describe('Can insert elements', () => {
 			const pset = TwoPSet();
 
@@ -32,27 +47,22 @@ describe('TwoPSet', () => {
 				expect(pset.insert(1)).toEqual([Set([1]), Set()]);
 			});
 
-			test('internal state', () => {
+			test('internal elements', () => {
 				pset.insert(2);
 				expect(pset.elements()).toEqual(Set([1, 2]));
 			});
 		});
 
-		describe('Check static methods', () => {
+		describe('Can remove elements', () => {
 			const pset = TwoPSet();
 
-			test('initial', () => {
-				expect(TwoPSet.initial()).toEqual([Set(), Set()]);
+			test('return delta', () => {
+				expect(pset.remove(1)).toEqual([Set(), Set([1])]);
 			});
 
-			test('join', () => {
-				['a', 'b', 'd'].forEach(num => pset.insert(num));
-				pset.remove('d');
-
-				expect(TwoPSet.join(pset.state(), pset.insert('c'))).toEqual([
-					Set(['a', 'b', 'd', 'c']),
-					Set(['d'])
-				]);
+			test('internal state', () => {
+				pset.remove(2);
+				expect(pset.state()).toEqual([Set(), Set([1, 2])]);
 			});
 		});
 	});

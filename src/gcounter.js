@@ -2,24 +2,24 @@ import { Map } from 'immutable';
 
 const GCounter = (initId = new Date().toISOString()) => {
 	const id = initId;
-	let m = Map({ [id]: 0 });
+	let counter = Map({ [id]: 0 });
 
-	const initial = () => Map({});
+	const initial = () => Map();
 
-	const state = () => m;
+	const state = () => counter;
 
 	const inc = () => {
-		const delta = Map({ [id]: m.get(id) + 1 });
-		m = m.merge(delta);
+		const delta = Map({ [id]: counter.get(id) + 1 });
+		counter = join(counter, delta);
 		return delta;
 	};
 
-	const value = () => m.reduce((reducer, val) => reducer + val);
+	const value = () => counter.reduce((reducer, val) => reducer + val);
 
 	const join = (s1, s2) =>
 		s1.mergeWith((mVal, deltaVal) => Math.max(mVal, deltaVal), s2);
 
-	const apply = delta => (m = join(m, delta));
+	const apply = delta => (counter = join(counter, delta));
 
 	GCounter.initial = initial;
 	GCounter.join = join;
